@@ -1,7 +1,7 @@
 class ApplicationController < ActionController::API
   include ActionController::HttpAuthentication::Token::ControllerMethods
 
-  before_action :authenticate!
+  before_action :authenticate!, except: [:hello]
 
   def hello
     render json: { text: 'Hello World' }
