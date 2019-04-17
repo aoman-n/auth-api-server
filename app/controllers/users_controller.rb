@@ -1,10 +1,20 @@
+require 'jwt'
+
 class UsersController < ApplicationController
-  skip_before_action :authenticate!, only: [ :create ]
+  skip_before_action :authenticate!, only: [:create]
 
   def create
+    secret = ENV['HMAC_SECRET'] || 'hmac_jwt'
     @user = User.new(user_params)
     if @user.save
-      render json: @user
+      @user.remember
+      payload = {
+        user_id: @user.id,
+        token: @user.remember_token
+      }
+      j_token = JWT.encode payload, secret, 'HS256'
+      puts 'token: '
+      render json: { token: j_token }
     else
       render json: { errors: @users.errors.full_messages }, status: 400
     end
