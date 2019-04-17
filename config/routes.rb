@@ -1,7 +1,8 @@
 Rails.application.routes.draw do
 
   get '/hello', to: 'application#hello'
-  post '/log_in', to: 'sessions#create'
+  post '/login', to: 'sessions#create'
+  delete '/logout', to: 'sessions#destroy'
 
   resources :users, only: [:create] do
     collection do

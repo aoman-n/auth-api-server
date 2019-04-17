@@ -1,14 +1,19 @@
 class SessionsController < ApplicationController
-  skip_before_action :authenticate!, only: [ :create ]
 
   def create
     @user = User.find_by(email: params[:email])
 
     if @user && @user.authenticate(params[:password])
-      render json: @user
+      token = create_token_for_login(@user)
+      render json: {token: token}
     else
       render json: { errors: ['ログインに失敗しました'] }, status: 401
     end
+  end
+
+  def destroy
+    log_out if logged_in?
+    render json: { message: "success log out" }
   end
 
 end

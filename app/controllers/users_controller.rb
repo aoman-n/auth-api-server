@@ -1,7 +1,7 @@
 require 'jwt'
 
 class UsersController < ApplicationController
-  skip_before_action :authenticate!, only: [:create]
+  before_action :logged_in_user, only: [:me]
 
   def create
     secret = ENV['HMAC_SECRET'] || 'hmac_jwt'
