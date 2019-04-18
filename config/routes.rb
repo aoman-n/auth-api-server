@@ -9,5 +9,6 @@ Rails.application.routes.draw do
       get 'me'
     end
   end
+  resources :account_activations, only: [:edit]
 
 end

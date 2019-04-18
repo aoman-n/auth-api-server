@@ -23,7 +23,7 @@ module SessionsHelper
     token = request.headers['Authorization'].match(/\ABearer (.*)\z/)[1]
     decoded_token = JWT.decode(token, secret, true, { algorithm: 'HS256' }).first
     user = User.find_by(id: decoded_token['user_id'])
-    if user && user.authenticated?(:remember, decoded_token['token'])
+    if user && user.activated? && user.authenticated?(:remember, decoded_token['token'])
       @current_user = user
     else
       nil

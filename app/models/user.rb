@@ -1,5 +1,9 @@
 class User < ApplicationRecord
+  # accessor
   attr_accessor :remember_token, :activation_token, :reset_token
+
+  # callback
+  before_create :create_activation_digest
 
   has_secure_password
   # has_secure_token
@@ -38,6 +42,19 @@ class User < ApplicationRecord
     digest = send("#{attribute}_digest")
     return false if digest.nil?
     BCrypt::Password.new(digest).is_password?(token)
+  end
+
+  def send_activation_email
+    UserMailer.account_activation(self).deliver_now
+  end
+
+  def create_activation_digest
+    self.activation_token  = User.new_token
+    self.activation_digest = User.digest(activation_token)
+  end
+
+  def activate
+    update_columns(activated: true, activated_at: Time.zone.now)
   end
 
 end

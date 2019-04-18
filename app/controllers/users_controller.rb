@@ -4,17 +4,10 @@ class UsersController < ApplicationController
   before_action :logged_in_user, only: [:me]
 
   def create
-    secret = ENV['HMAC_SECRET'] || 'hmac_jwt'
     @user = User.new(user_params)
     if @user.save
-      @user.remember
-      payload = {
-        user_id: @user.id,
-        token: @user.remember_token
-      }
-      j_token = JWT.encode payload, secret, 'HS256'
-      puts 'token: '
-      render json: { token: j_token }
+      @user.send_activation_email
+      render json: { message: '確認メールを送信しました。' }
     else
       render json: { errors: @user.errors.full_messages }, status: 401
     end
