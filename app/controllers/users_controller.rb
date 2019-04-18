@@ -16,7 +16,7 @@ class UsersController < ApplicationController
       puts 'token: '
       render json: { token: j_token }
     else
-      render json: { errors: @users.errors.full_messages }, status: 400
+      render json: { errors: @user.errors.full_messages }, status: 401
     end
   end
 
