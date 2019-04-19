@@ -2,12 +2,11 @@ class SessionsController < ApplicationController
 
   def create
     @user = User.find_by(email: params[:email])
-
     if @user && @user.authenticate(params[:password])
       token = create_token_for_login(@user)
-      render json: {token: token}
+      render json: { token: token }
     else
-      render json: { errors: ['ログインに失敗しました'] }, status: 401
+      render json: { errors: @user.errors.full_messages }, status: 401
     end
   end
 
