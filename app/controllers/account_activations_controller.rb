@@ -7,7 +7,7 @@ class AccountActivationsController < ApplicationController
       j_token = create_token_for_login(user)
       render json: { message: "Account activated!!", token: j_token }
     else
-      render json: { status: "Invalid activation link" }, status: 400
+      render json: { message: "Invalid activation link" }, status: 400
     end
   end
 
