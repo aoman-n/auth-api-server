@@ -23,6 +23,7 @@ class User < ApplicationRecord
 
   # callback
   before_create :create_activation_digest
+  before_save :downcase_email
 
   has_secure_password
 
@@ -85,4 +86,9 @@ class User < ApplicationRecord
     reset_sent_at < 2.hours.ago
   end
 
+  private
+
+  def downcase_email
+    email.downcase!
+  end
 end
