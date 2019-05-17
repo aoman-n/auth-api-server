@@ -1,6 +1,7 @@
 class ApplicationController < ActionController::API
   include ActionController::HttpAuthentication::Token::ControllerMethods
-  include SessionsHelper
+  # include SessionsHelper
+  include AuthorizationModule
 
   # unless Rails.env.development?
     rescue_from Exception, with: :custom_error_500
@@ -61,5 +62,31 @@ class ApplicationController < ActionController::API
         response_unauthorized
       end
     end
+
+    def current_user
+      return @current_user if @current_user.present?
+      j_token = get_http_header_token
+      return nil if j_token.blank?
+      decoded_token = decod_token(j_token)
+      if user && user.activated? && user.authenticated?(:remember, decoded_token['token'])
+        @current_user = user
+      else
+        nil
+      end
+    end
+
+    def logged_in?
+      !current_user.nil?
+    end
+
+    def log_out
+      current_user.forget
+      @current_user = nil
+    end
+
+    # 渡されたユーザーがログイン済みユーザーであればtrueを返す
+    # def current_user?(user)
+    #   user == current_user
+    # end
 
 end
